@@ -1,0 +1,69 @@
+README.uemacs
+
+This is my personal variety of microemacs, ported and nursed along since
+the 90's. It is descended from MicroEMACS 5.03, written by Jean-Pierre
+Demailly which was based on MicroEMACS 3.12 written by Daniel M. Lawrence
+based on code by Dave G. Conroy.
+
+My fingers know what to do and old habits die hard.
+
+It does not depend on anything except libc. (I added an internal termcap
+library based on GNU termcap 1.3.1 in order to remove that dependency since
+Linux distros stopped shipping termcap. FWIW IMHO termcap is about a
+million times more sensible than terminfo.)
+
+I have removed a ton of ancient, obsolete and not supportable by me code
+related to long dead operating systems. Ok, I also gutted the MSDOS and
+Windows NT support. And the various non-GCC compilers. I have trimmed it
+down to remove as much conditional compilation as I could.
+
+There are some "quirks"...
+
+1) It will core dump if your terminal has too many lines. The trigger
+number seems to vary but is usually around 128+ I have no idea why. My
+efforts to find the root of that problem have all failed.
+
+2) The current code is very specific to Linux. It has not been built on any
+other platform for a long time.
+
+3) I would love to adapt it to Mac OS but I have not found the time. I did
+mess around a bit and the needed changes don't seem large.
+
+UPDATE: my good friend Claude brought everything up to POSIX and then we
+did a few rounds of debugging and compiler message cleanup. Mac OS is now
+supported!
+
+4) The termcap file has been pared down to basically just xterm. Nobody
+uses anything else but I probably still have old termcaps laying around if
+you would like to dispute that contention.
+
+5) The binary is shipped with ProTop as "uemacs" but I usually rename it to
+"emacs". If you have and want real emacs you might want to keep the name as
+"uemacs".
+
+6) If you would like the C source just ask.  I will be happy to share.
+
+
+To install this on Linux:
+
+	sudo cp bin/uemacs  /usr/local/bin/emacs
+	sudo cp etc/termcap /usr/local/etc
+	sudo cp etc/emacsrc /usr/local/.emacsrc	# my personal key bindings
+
+Add to .bash_profile:
+
+	export TERMCAP=/usr/local/etc/termcap
+
+or, if you would rather:
+
+	sudo cp etc/termcap /usr/local/etc
+
+
+TODO:
+
+ - Fix the "too many lines" problem
+ - Add /usr/local/etc as a default location for termcap and .emacsrc
+ - Remove CMODE and other totally unused functionality
+ - Figure out colors and selected text highlighting
+ - Cleanup termcap code
+ - Continue to reformat the source for wide and tall screens

@@ -1,0 +1,111 @@
+CONTENTS
+
+This version of Microemacs is a Linux port of the original Microemacs 3.12
+release by Daniel Lawrence. A few additions have been made in order to
+
+1) correct some minor bugs and compilation problems
+2) provide better support for the arrow keys
+3) allow window change of sizes to take effect on size of text displayed
+4) introduce more complete and more reliable justification routines
+   (new key bindings Esc-I Esc-J Esc-Q Esc-T)
+
+Microemacs is a small but nevertheless very powerful emacs clone. 
+It can be almost entirely customized through the user configuration 
+file ~/.emacsrc
+
+Included with the distribution is a system wide initialization file  
+emacs.rc  allowing efficient handling of TeX and LaTeX files
+
+
+COMPILATION AND INSTALLATION
+
+* To compile microemacs-5.03, just type "make"
+
+* Installation: type "make install"
+
+* Compilation --and-- installation: type "make all"
+
+* After installing, cleaning of object files is obtained by "make clean"
+
+
+PORTING NOTES (macOS)
+
+The tree builds on macOS (Apple Clang, arm64 and x86_64) as well as Linux.
+A few things to be aware of if porting to another Unix-like system:
+
+* The Makefile uses "CC ?= cc" so it picks up Apple Clang on macOS and gcc
+  on Linux without modification. CFLAGS includes "-g"; remove it for a
+  release build. The tree carries its own termcap/tparam implementation
+  (termcap.c, tparam.c), so no -ltermcap / -lcurses link is needed.
+
+* window.c uses <termios.h> and <sys/ioctl.h> for struct winsize and
+  TIOCGWINSZ. Older revisions of this tree included <asm/termios.h> and
+  <asm/ioctls.h>, which are Linux-kernel-private and not portable.
+
+* scopen() in unix.c queries the terminal size with TIOCGWINSZ on fd 0,
+  1, then 2, falling back to termcap (li/co), then to the LINES/COLUMNS
+  environment variables, then to a 24x80 default. This makes the editor
+  usable when stdin is not a tty (e.g. when launched under lldb).
+
+* The signal handler check_resize() (window.c) returns void, as POSIX
+  requires. It bails out early if curwp is NULL, since SIGWINCH can
+  arrive before edinit() has set up the first window.
+
+* macOS libc's __strcpy_chk traps (SIGTRAP, "Trace trap") when the
+  source and destination of strcpy() overlap. getval() in eval.c
+  legitimately returns a pointer that aliases its argument (e.g. it
+  returns token+1 to strip a leading quote). Callers that needed to
+  copy that result back into the input buffer were converted to use
+  memmove() in exec.c and eval.c. If you add new code that does
+  strcpy(buf, getval(buf)) or similar, use memmove() instead.
+
+* eproto.h previously declared "void crypt(char *, unsigned)", which
+  collides with libc's crypt(3) on macOS (and any system whose
+  <unistd.h> declares it). The declaration was unused and has been
+  removed.
+
+* Several C source files acquired explicit #include lines for headers
+  that older glibc pulled in transitively but macOS / modern Clang do
+  not: <ctype.h> in basic.c and word.c, <unistd.h> in file.c, termcap.c
+  and tparam.c, <fcntl.h> in termcap.c, and <stdlib.h>/<string.h>
+  unconditionally in termcap.c and tparam.c.
+
+* nullproc(), unarg(), dcline(), edinit() and main() were given
+  explicit return statements; modern Clang treats falling off the end
+  of a non-void function as an error by default.
+
+
+HISTORY
+
+See the doc subdirectory for more details. MicroEMACS has been developped by
+
+	Daniel M. Lawrence
+	617 New York St
+	Lafayette, IN 47901
+
+        AT&T:	(317) 742-5153
+	America Online:	bardor
+        Internet:	mdbs!dan@dynamo.ecn.purdue.edu
+	FIDONET:	1:201/10 The Programmer's Room (317) 742-5533
+
+	The Programmer's Room
+	FIDO 1:201/10
+	(317) 742-5533
+	24 hours  300/1200/2400/9600HST baud
+
+
+The main changes for the Linux port of MicroEMACS were suggested in 1992 by
+
+Humberto Ortiz-Zuazaga                  INTERNET: zuazaga@ucunix.san.uc.edu
+Dept. of Physiology & Biophysics          BITNET:              picone@ucbeh
+University of Cincinnati                     CIS:                72301,2303
+
+The present emacs.rc file and the minor fixes were contributed by
+
+Jean-Pierre Demailly
+Universit\'e de Grenoble I
+Institut Fourier, UMR 5582 du CNRS
+BP74, 100 rue des Maths
+38402 Saint-Martin d'H\`eres, France
+http://www-fourier.ujf-grenoble.fr/~demailly
+E-mail: demailly@fourier.ujf-grenoble.fr

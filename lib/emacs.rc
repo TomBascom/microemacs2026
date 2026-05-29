@@ -1,0 +1,506 @@
+shell-command "stty -ixon"
+set $discmd FALSE
+set $timeflag TRUE
+set $flicker FALSE
+set $posflag TRUE
+;set $mmove 1
+
+;add-mode "CMODE"
+;add-global-mode "CMODE"
+add-mode "WRAP"
+add-global-mode "WRAP"
+add-mode "EXACT"
+add-global-mode "EXACT"
+
+store-procedure suspend-to-shell
+  shell-command "echo 'Type ~"exit~" or <Ctrl-D> later on to return to MicroEmacs'; tcsh -l ; "
+!endm
+
+store-procedure insert-date
+  shell-command "echo -n `date +~"Date: %a %e, %b %Y, %T %Z:00~" | sed -e ~"/GMT-/s//+0/~"` > /tmp/date-of-now"
+  insert-file /tmp/date-of-now
+  shell-command "rm -f /tmp/date-of-now"
+!endm
+
+store-procedure toggle-colors
+  set %colorstate &mod &add %colorstate 1 3
+  !if &equal %colorstate 0
+     shell-command "xtermset -term '$XTERM' -bg lightyellow -fg black"
+  !endif
+  !if &equal %colorstate 1
+     shell-command "xtermset -term '$XTERM' -bg black -fg white"
+  !endif
+  !if &equal %colorstate 2
+     shell-command "xtermset -term '$XTERM' -bg blue -fg yellow"
+  !endif
+!endm
+
+store-procedure insert-greek-chars
+  set %greek-string @"Greek characters: "
+  !if &sequal %greek-string "Greek characters: "
+    !return
+  !endif
+  !if &sequal %greek-string "-"
+    insert-string "----------------------------------------------------------------------------"
+    newline
+    !return
+  !endif
+  !if &sequal %greek-string "="
+    insert-string "============================================================================"
+    newline
+    !return
+  !endif
+  !if &sequal %greek-string "*"
+    insert-string "****************************************************************************"
+    newline
+    !return
+  !endif
+  set %icount &length %greek-string
+  !while &not &equal %icount 0
+    set %greek-char &left &right %greek-string %icount 1
+    !if &sequal %greek-char "a"
+      insert-string "\alpha"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "b"
+      insert-string "\beta"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "g"
+      insert-string "\gamma"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "d"
+      insert-string "\delta"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "e"
+      insert-string "\varepsilon"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "z"
+      insert-string "\zeta"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "h"
+      insert-string "\eta"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "q"
+      insert-string "\theta"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "i"
+      insert-string "\iota"
+      !goto charfound
+    !endif    
+    !if &sequal %greek-char "k"
+      insert-string "\kappa"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "l"
+      insert-string "\lambda"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "m"
+      insert-string "\mu"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "n"
+      insert-string "\nu"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "x"
+      insert-string "\xi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "p"
+      insert-string "\pi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "r"
+      insert-string "\rho"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "s"
+      insert-string "\sigma"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "t"
+      insert-string "\tau"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "u"
+      insert-string "\upsilon"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "f"
+      insert-string "\varphi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "c"
+      insert-string "\chi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "j"
+      insert-string "\psi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "o"
+      insert-string "\omega"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "w"
+      insert-string "\omega"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "G"
+      insert-string "\Gamma"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "D"
+      insert-string "\Delta"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "Q"
+      insert-string "\Theta"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "L"
+      insert-string "\Lambda"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "N"
+      insert-string "\nabla"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "X"
+      insert-string "\Xi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "P"
+      insert-string "\Pi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "S"
+      insert-string "\Sigma"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "U"
+      insert-string "\Upsilon"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "F"
+      insert-string "\Phi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "J"
+      insert-string "\Psi"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "O"
+      insert-string "\Omega"
+      !goto charfound
+    !endif
+    !if &sequal %greek-char "W"
+      insert-string "\Omega"
+      !goto charfound
+    !endif
+    insert-string %greek-char
+*charfound 
+    set %icount &sub %icount 1
+  !endwhile
+!endm
+
+store-procedure DOStoTeX
+  set-mark
+  beginning-of-file
+  replace-string "†" "\'a"
+  beginning-of-file
+  replace-string "Ö" "\`a"
+  beginning-of-file
+  replace-string "É" "\^a"
+  beginning-of-file
+  replace-string "Ñ" "\~"a"  
+  beginning-of-file
+  replace-string "Ü" "{\aa}"
+  beginning-of-file
+  replace-string "ë" "{\ae}"  
+  beginning-of-file
+  replace-string "é" "\~"A"
+  beginning-of-file
+  replace-string "è" "{\AA}"  
+  beginning-of-file
+  replace-string "í" "{\AE}"  
+  beginning-of-file
+  replace-string "Ç" "\'e"
+  beginning-of-file
+  replace-string "ä" "\`e"
+  beginning-of-file
+  replace-string "à" "\^e"
+  beginning-of-file
+  replace-string "â" "\~"e"
+  beginning-of-file
+  replace-string "ê" "\'E"  
+  beginning-of-file
+  replace-string "°" "\'{\i}"
+  beginning-of-file
+  replace-string "ç" "\`{\i}"
+  beginning-of-file
+  replace-string "å" "\^{\i}"
+  beginning-of-file
+  replace-string "ã" "\~"{\i}"
+  beginning-of-file
+  replace-string "¢" "\'o"
+  beginning-of-file
+  replace-string "ï" "\`o"
+  beginning-of-file
+  replace-string "ì" "\^o"
+  beginning-of-file
+  replace-string "î" "\~"o"
+  beginning-of-file
+  replace-string "ô" "\~"O"
+  beginning-of-file
+  replace-string "£" "\'u"
+  beginning-of-file
+  replace-string "ó" "\`u"
+  beginning-of-file
+  replace-string "ñ" "\^u"
+  beginning-of-file
+  replace-string "Å" "\~"u"
+  beginning-of-file
+  replace-string "ö" "\~"U"
+  beginning-of-file
+  replace-string "á" "\c{c}"
+  beginning-of-file
+  replace-string "Ä" "\c{C}"
+  beginning-of-file
+  replace-string "§" "\~~n"
+  beginning-of-file
+  replace-string "•" "\~~N"
+  exchange-point-and-mark
+!endm
+
+store-procedure IsotoTeX
+  set-mark
+  beginning-of-file
+  replace-string "·" "\'a"
+  beginning-of-file
+  replace-string "‡" "\`a"
+  beginning-of-file
+  replace-string "‚" "\^a"
+  beginning-of-file
+  replace-string "Â" "{\aa}"
+  beginning-of-file
+  replace-string "Ê" "{\ae}"
+  beginning-of-file
+  replace-string "≈" "{\AA}"
+  beginning-of-file
+  replace-string "∆" "{\AE}"
+  beginning-of-file
+  replace-string "È" "\'e"
+  beginning-of-file
+  replace-string "Ë" "\`e"
+  beginning-of-file
+  replace-string "Í" "\^e"
+  beginning-of-file
+  replace-string "…" "\'E"
+  beginning-of-file
+  replace-string "Ì" "\'{\i}"
+  beginning-of-file
+  replace-string "Ï" "\`{\i}"
+  beginning-of-file
+  replace-string "Ó" "\^{\i}"
+  beginning-of-file
+  replace-string "Û" "\'o"
+  beginning-of-file
+  replace-string "Ú" "\`o"
+  beginning-of-file
+  replace-string "Ù" "\^o"
+  beginning-of-file
+  replace-string "˙" "\'u"
+  beginning-of-file
+  replace-string "˘" "\`u"
+  beginning-of-file
+  replace-string "˚" "\^u"
+  beginning-of-file
+  replace-string "Á" "\c{c}"
+  beginning-of-file
+  replace-string "«" "\c{C}"
+  exchange-point-and-mark
+!endm
+
+store-procedure TeXtoIso
+  set-mark
+  beginning-of-file
+  replace-string "\'a" "·" 
+  beginning-of-file
+  replace-string "\`a" "‡" 
+  beginning-of-file
+  replace-string "\^a" "‚" 
+  beginning-of-file
+  replace-string "{\aa}" "Â" 
+  beginning-of-file
+  replace-string "{\ae}" "Ê" 
+  beginning-of-file
+  replace-string "{\AA}" "≈" 
+  beginning-of-file
+  replace-string "{\AE}" "∆" 
+  beginning-of-file
+  replace-string "\'e" "È" 
+  beginning-of-file
+  replace-string "\`e" "Ë" 
+  beginning-of-file
+  replace-string "\^e" "Í" 
+  beginning-of-file
+  replace-string "\'E" "…" 
+  beginning-of-file
+  replace-string "\'{\i}" "Ì" 
+  beginning-of-file
+  replace-string "\`{\i}" "Ï" 
+  beginning-of-file
+  replace-string "\^{\i}" "Ó" 
+  beginning-of-file
+  replace-string "\'o" "Û" 
+  beginning-of-file
+  replace-string "\`o" "Ú" 
+  beginning-of-file
+  replace-string "\^o" "Ù" 
+  beginning-of-file
+  replace-string "\'u" "˙" 
+  beginning-of-file
+  replace-string "\`u" "˘" 
+  beginning-of-file
+  replace-string "\^u" "˚" 
+  beginning-of-file
+  replace-string "\c{c}" "Á" 
+  beginning-of-file
+  replace-string "\c{C}" "«" 
+  exchange-point-and-mark
+!endm
+
+store-procedure root-name
+  set %rname &left $cfname &sub &length $cfname 4
+!endm
+
+store-procedure load-log-file
+  save-file
+  write-message "Loading .log file (list of errors: press again ^XL)"
+  set $discmd FALSE
+  macro-to-key list-log-file        ^XL
+  delete-other-windows
+1 split-current-window
+  execute-procedure root-name
+  set %lname &cat %rname ".log"
+  find-file %lname
+  !force read-file %lname
+  next-window
+!endm
+
+store-procedure list-log-file
+  next-window
+  !force search-forward "~n!"
+  !if &not &and $status TRUE
+    delete-buffer
+    delete-window
+    macro-to-key load-log-file        ^XL
+    write-message "No further error(s) in the  .log  file"
+    set $discmd TRUE
+    !return
+  !endif
+  search-forward "~nl."
+  set %numb &mid $line 3 &sub &length $line 2 
+  set %count 0
+  !while &not &equal 32 &ascii %numb
+    set %count &times 10 %count
+    set %count &add %count &sub &ascii %numb 48 
+    set %numb &right %numb &sub &length %numb 1
+  !endwhile
+  previous-window
+  &ind %count goto-line
+  write-message &cat "Error on line " %count
+!endm
+
+store-procedure save-to-othername
+  set $cfname @"Write-file: "
+  set $cbufname $cfname
+  write-file $cfname
+!endm
+
+store-procedure run-tex
+  save-file
+  shell-command &cat "tex " $cfname
+!endm
+
+store-procedure run-latex
+  save-file
+  shell-command &cat "latex " $cfname
+!endm
+
+store-procedure view-dvitty
+  execute-procedure root-name
+  !if &not &exist &cat %rname ".dvi"
+    !return
+  !endif
+  save-file
+  shell-command &cat &cat "dvi2tty " %rname ".dvi &"
+!endm
+
+store-procedure run-dvips
+  execute-procedure root-name
+  !if &not &exist &cat %rname ".dvi"
+    !return
+  !endif
+  save-file
+  shell-command &cat &cat &cat "xdvips " %rname ".dvi &"
+!endm
+
+store-procedure view-xdvi
+  execute-procedure root-name
+  !if &not &exist &cat %rname ".dvi"
+    !return
+  !endif
+  save-file
+  shell-command &cat &cat "xdvi -s 6 " %rname " &"
+!endm
+
+store-procedure view-dvisvga
+  execute-procedure root-name
+  !if &not &exist &cat %rname ".dvi"
+    !return
+  !endif
+  save-file
+  shell-command &cat "dvisvga " %rname
+!endm
+
+store-procedure view-ps
+  execute-procedure root-name
+  !if &not &exist &cat %rname ".ps"
+    !return
+  !endif
+  save-file
+  shell-command &cat &cat "ghostview " %rname ".ps &"
+!endm
+
+bind-to-key query-replace-string        M-%
+bind-to-key incremental-search          ^S
+bind-to-key reverse-incremental-search  ^R
+bind-to-key describe-bindings           ^X:
+macro-to-key save-to-othername          ^X^W
+macro-to-key load-log-file              ^XL
+macro-to-key suspend-to-shell           ^Z
+
+macro-to-key DOStoTeX                   M-/
+macro-to-key IsotoTeX                   M-\
+macro-to-key TeXtoIso                   M-'
+macro-to-key run-tex                    M-$
+macro-to-key run-latex                  M-&
+macro-to-key run-dvips                  M-,
+macro-to-key view-ps                    M-;
+macro-to-key view-xdvi                  M-:
+macro-to-key view-dvisvga               M-=
+macro-to-key insert-greek-chars         M-*
+macro-to-key insert-date                M-+
+macro-to-key toggle-colors              M-#
+
+set %colorstate 0
